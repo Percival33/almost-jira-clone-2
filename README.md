@@ -4,8 +4,8 @@ The application is designed to run in separate containers, allowing for easy sca
 
 ## About
 
-It has started as university project at  for Application Programming course. 
-See mode details at 
+It has started as university group project for Application Programming course. 
+See mode details, initial state [here](https://github.com/Percival33/almost-jira-clone.git)
 
 And now is further developed by myself.
 
