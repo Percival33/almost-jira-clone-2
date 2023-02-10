@@ -1,0 +1,15 @@
+version: '3'
+services:
+  almost-jira-api:
+    build: ./almost-jira/.
+    container_name: almost-jira-api
+    ports:
+      - 8080:8080
+    environment:
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+  almost-jira-ui:
+    build: ./almost-jira-ui/.
+    container_name: almost-jira-ui
+    ports:
+      - 3000:8080
