@@ -1,8 +1,7 @@
 package pl.edu.pw.elka.pap.z16.almostjira.models;
 
 import lombok.Builder;
-import lombok.Data;
-import lombok.Setter;
+import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.annotation.Id;
@@ -21,14 +20,14 @@ public record User(
         Date lastModified,
 
 
-        @Setter
+        @Getter
         String firstName,
-        @Setter
+        @Getter
         String lastName,
-        @Setter
+        @Getter
         String login,
-        @Setter
+        @Getter
         String password,
-        @Setter
+        @Getter
         List<Project> projects
 ) { }
