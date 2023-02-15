@@ -1,6 +1,5 @@
 package pl.edu.pw.elka.pap.z16.almostjira.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.edu.pw.elka.pap.z16.almostjira.exceptions.ClientNotAuthorizedException;
 import pl.edu.pw.elka.pap.z16.almostjira.exceptions.ResourceNotFoundException;
@@ -14,8 +13,10 @@ import java.util.UUID;
 
 @Service
 public class ProjectService {
-    @Autowired
-    ProjectRepository projectRepository;
+    private final ProjectRepository projectRepository;
+    public ProjectService(ProjectRepository projectRepository) {
+        this.projectRepository = projectRepository;
+    }
 
     public Project getProjectById(String id) {
         return projectRepository.findById(id).orElseThrow((() ->
