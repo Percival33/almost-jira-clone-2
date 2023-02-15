@@ -6,28 +6,22 @@ package pl.edu.pw.elka.pap.z16.almostjira.controllers.Projects;
  tasks list
  overseer - user_id */
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.edu.pw.elka.pap.z16.almostjira.exceptions.ClientNotAuthorizedException;
-import pl.edu.pw.elka.pap.z16.almostjira.models.Project;
-import pl.edu.pw.elka.pap.z16.almostjira.models.UserForm;
 import pl.edu.pw.elka.pap.z16.almostjira.services.ProjectService;
 import pl.edu.pw.elka.pap.z16.almostjira.models.ProjectForm;
-import pl.edu.pw.elka.pap.z16.almostjira.services.UserService;
 import pl.edu.pw.elka.pap.z16.almostjira.utils.ResponseHandler;
-
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/projects")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class ProjectsController {
-    @Autowired
-    ProjectService projectService;
+    private final ProjectService projectService;
+    public ProjectsController(ProjectService projectService) {
+        this.projectService = projectService;
+    }
     @PostMapping()
     public ResponseEntity<Object> addProject(@RequestBody ProjectForm newProject){
         try {

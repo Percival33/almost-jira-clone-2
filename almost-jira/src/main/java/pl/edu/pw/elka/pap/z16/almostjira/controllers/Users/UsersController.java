@@ -1,11 +1,10 @@
 package pl.edu.pw.elka.pap.z16.almostjira.controllers.Users;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pl.edu.pw.elka.pap.z16.almostjira.exceptions.ClientNotAuthorizedException;
 import pl.edu.pw.elka.pap.z16.almostjira.exceptions.LoginAlreadyInUseException;
+import pl.edu.pw.elka.pap.z16.almostjira.models.User;
 import pl.edu.pw.elka.pap.z16.almostjira.models.UserForm;
 import pl.edu.pw.elka.pap.z16.almostjira.services.UserService;
 import pl.edu.pw.elka.pap.z16.almostjira.utils.ResponseHandler;
@@ -15,10 +14,10 @@ import pl.edu.pw.elka.pap.z16.almostjira.utils.ResponseHandler;
 @RequestMapping("/users")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class UsersController {
-    @Autowired
-    UserService userService;
-
-
+    private final UserService userService;
+    public UsersController(UserService userService) {
+        this.userService = userService;
+    }
     @PostMapping()
     public ResponseEntity<Object> createUser(@RequestBody UserForm newUser){
         try {
