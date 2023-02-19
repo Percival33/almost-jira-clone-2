@@ -1,11 +1,5 @@
 package pl.edu.pw.elka.pap.z16.almostjira.controllers.projects;
 
-/* 1 projekt:
- project id
- project name
- tasks list
- overseer - user_id */
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -72,10 +66,5 @@ public class ProjectsController {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
         }
     }
-// lista słownikow reprezentujacych pojedynczy projekt
-// metoda zeby odczytac dane z projektu o danym Id
-// metoda zeby dodac projekt do listy (dba zeby id bylo unikalne)
-// metoda zeby zmienic projekt o danym id
-// metoda zeby usunac projekt  o danym id
 }
 

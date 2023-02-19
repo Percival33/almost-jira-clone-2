@@ -77,7 +77,4 @@ public class UsersController {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
         }
     }
-
-    // lista uzytkownikow
-    // getery i setery dla uzytkownikow o danym loginie
 }
