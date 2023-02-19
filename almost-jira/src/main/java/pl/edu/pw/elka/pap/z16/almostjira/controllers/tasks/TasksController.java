@@ -1,4 +1,4 @@
-package pl.edu.pw.elka.pap.z16.almostjira.controllers.Tasks;
+package pl.edu.pw.elka.pap.z16.almostjira.controllers.tasks;
 
 
 // lista słownikow reprezentujacych pojedynczy projeky
@@ -20,6 +20,7 @@ import java.util.ArrayList;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class TasksController {
     private final ProjectService projectService;
+    private static final String MSG = "success";
 
     public TasksController(ProjectService projectService) {
         this.projectService = projectService;
@@ -29,34 +30,34 @@ public class TasksController {
         try {
             var modifiedList = projectService.getTasks(projectId);
             if (modifiedList == null)
-                modifiedList = new ArrayList<String>();
-            if (newTask == null || newTask == "")
+                modifiedList = new ArrayList<>();
+            if (newTask == null || newTask.equals(""))
                 return ResponseHandler.generateResponse("empty task", HttpStatus.OK, projectService.updateProjectUpdateTasks(modifiedList, projectId));
             modifiedList.add(newTask);
-            return ResponseHandler.generateResponse("success", HttpStatus.OK, projectService.updateProjectUpdateTasks(modifiedList, projectId));
+            return ResponseHandler.generateResponse(MSG, HttpStatus.OK, projectService.updateProjectUpdateTasks(modifiedList, projectId));
         } catch (Exception e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
         }
     }
 
     @PutMapping("/{id}/tasks")
-    public ResponseEntity<Object> modifyTaskInProject(@PathVariable("id") String project_id, int taskIndex, String modifiedTask){
+    public ResponseEntity<Object> modifyTaskInProject(@PathVariable("id") String projectId, int taskIndex, String modifiedTask){
         try {
 
-            var modifiedList = projectService.getTasks(project_id);
+            var modifiedList = projectService.getTasks(projectId);
             modifiedList.set(taskIndex-1, modifiedTask);
-            return ResponseHandler.generateResponse("success", HttpStatus.OK, projectService.updateProjectUpdateTasks(modifiedList, project_id));
+            return ResponseHandler.generateResponse(MSG, HttpStatus.OK, projectService.updateProjectUpdateTasks(modifiedList, projectId));
         } catch (Exception e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
         }
     }
 
     @DeleteMapping("/{id}/tasks")
-    public ResponseEntity<Object> removeTaskFromProject(@PathVariable("id") String project_id, int taskIndex){
+    public ResponseEntity<Object> removeTaskFromProject(@PathVariable("id") String projectId, int taskIndex){
         try {
-            var modifiedList = projectService.getTasks(project_id);
+            var modifiedList = projectService.getTasks(projectId);
             modifiedList.remove(taskIndex-1);
-            return ResponseHandler.generateResponse("success", HttpStatus.OK, projectService.updateProjectUpdateTasks(modifiedList, project_id));
+            return ResponseHandler.generateResponse(MSG, HttpStatus.OK, projectService.updateProjectUpdateTasks(modifiedList, projectId));
         } catch (Exception e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
         }

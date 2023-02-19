@@ -1,10 +1,9 @@
-package pl.edu.pw.elka.pap.z16.almostjira.controllers.Users;
+package pl.edu.pw.elka.pap.z16.almostjira.controllers.users;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.edu.pw.elka.pap.z16.almostjira.exceptions.LoginAlreadyInUseException;
-import pl.edu.pw.elka.pap.z16.almostjira.models.User;
 import pl.edu.pw.elka.pap.z16.almostjira.models.UserForm;
 import pl.edu.pw.elka.pap.z16.almostjira.services.UserService;
 import pl.edu.pw.elka.pap.z16.almostjira.utils.ResponseHandler;
@@ -15,13 +14,14 @@ import pl.edu.pw.elka.pap.z16.almostjira.utils.ResponseHandler;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class UsersController {
     private final UserService userService;
+    private static final String MSG = "success";
     public UsersController(UserService userService) {
         this.userService = userService;
     }
     @PostMapping()
     public ResponseEntity<Object> createUser(@RequestBody UserForm newUser){
         try {
-            return ResponseHandler.generateResponse("success", HttpStatus.CREATED, userService.createUser(newUser));
+            return ResponseHandler.generateResponse(MSG, HttpStatus.CREATED, userService.createUser(newUser));
         } catch (Exception e) {
             if (e.getClass().getSimpleName().equals(LoginAlreadyInUseException.getName()))
                 return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_ACCEPTABLE, null);
@@ -30,9 +30,9 @@ public class UsersController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Object> updateUser(@PathVariable("id") String user_id, @RequestBody UserForm u){
+    public ResponseEntity<Object> updateUser(@PathVariable("id") String userId, @RequestBody UserForm u){
         try {
-            return ResponseHandler.generateResponse("success", HttpStatus.OK, userService.updateUser(u, user_id));
+            return ResponseHandler.generateResponse(MSG, HttpStatus.OK, userService.updateUser(u, userId));
         } catch (Exception e) {
             if (e.getClass().getSimpleName().equals(LoginAlreadyInUseException.getName()))
                 return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_ACCEPTABLE, null);
@@ -41,19 +41,19 @@ public class UsersController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Object> deleteUser(@PathVariable("id") String user_id){
+    public ResponseEntity<Object> deleteUser(@PathVariable("id") String userId){
         try {
-            userService.deleteUser(user_id);
-            return ResponseHandler.generateResponse("success", HttpStatus.NO_CONTENT, "User deleted successfully!");
+            userService.deleteUser(userId);
+            return ResponseHandler.generateResponse(MSG, HttpStatus.NO_CONTENT, "User deleted successfully!");
         } catch (Exception e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
         }
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Object> getUserById(@PathVariable("id") String user_id){
+    public ResponseEntity<Object> getUserById(@PathVariable("id") String userId){
         try {
-            return ResponseHandler.generateResponse("success", HttpStatus.OK, userService.getUserById(user_id));
+            return ResponseHandler.generateResponse(MSG, HttpStatus.OK, userService.getUserById(userId));
         } catch (Exception e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
         }
@@ -62,7 +62,7 @@ public class UsersController {
     @GetMapping
     public ResponseEntity<Object> getAllUsers() {
         try {
-            return ResponseHandler.generateResponse("success", HttpStatus.OK, userService.getAllUsers());
+            return ResponseHandler.generateResponse(MSG, HttpStatus.OK, userService.getAllUsers());
         } catch (Exception e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
         }
@@ -72,7 +72,7 @@ public class UsersController {
     @PutMapping
     public ResponseEntity<Object> loginattempt(String login, String password){
         try {
-            return ResponseHandler.generateResponse("success", HttpStatus.OK, userService.login(login, password));
+            return ResponseHandler.generateResponse(MSG, HttpStatus.OK, userService.login(login, password));
         } catch (Exception e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
         }

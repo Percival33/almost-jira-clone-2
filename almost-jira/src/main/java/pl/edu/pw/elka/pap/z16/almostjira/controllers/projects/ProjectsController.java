@@ -1,4 +1,4 @@
-package pl.edu.pw.elka.pap.z16.almostjira.controllers.Projects;
+package pl.edu.pw.elka.pap.z16.almostjira.controllers.projects;
 
 /* 1 projekt:
  project id
@@ -19,22 +19,23 @@ import pl.edu.pw.elka.pap.z16.almostjira.utils.ResponseHandler;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class ProjectsController {
     private final ProjectService projectService;
+    private static final String MSG = "success";
     public ProjectsController(ProjectService projectService) {
         this.projectService = projectService;
     }
     @PostMapping()
     public ResponseEntity<Object> addProject(@RequestBody ProjectForm newProject){
         try {
-            return ResponseHandler.generateResponse("success", HttpStatus.CREATED, projectService.createProject(newProject));
+            return ResponseHandler.generateResponse(MSG, HttpStatus.CREATED, projectService.createProject(newProject));
         } catch (Exception e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
         }
     }
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteProject(@PathVariable("id") String project_id, String user_id){
+    public ResponseEntity<Object> deleteProject(@PathVariable("id") String projectId, String userId){
         try {
-            projectService.deleteProject(project_id, user_id);
-            return ResponseHandler.generateResponse("success", HttpStatus.OK, "Project deleted successfully!");
+            projectService.deleteProject(projectId, userId);
+            return ResponseHandler.generateResponse(MSG, HttpStatus.OK, "Project deleted successfully!");
         } catch (Exception e) {
             if (e.getClass().getSimpleName().equals(ClientNotAuthorizedException.getName()))
                 return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.UNAUTHORIZED, null);
@@ -43,9 +44,9 @@ public class ProjectsController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getProjectById(@PathVariable("id") String project_id){
+    public ResponseEntity<Object> getProjectById(@PathVariable("id") String projectId){
         try {
-            return ResponseHandler.generateResponse("success", HttpStatus.OK, projectService.getProjectById(project_id));
+            return ResponseHandler.generateResponse(MSG, HttpStatus.OK, projectService.getProjectById(projectId));
         } catch (Exception e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
         }
@@ -54,7 +55,7 @@ public class ProjectsController {
     @GetMapping
     public ResponseEntity<Object> getProjects(){
         try {
-            return ResponseHandler.generateResponse("success", HttpStatus.OK, projectService.getAllProjects());
+            return ResponseHandler.generateResponse(MSG, HttpStatus.OK, projectService.getAllProjects());
         } catch (Exception e) {
             return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
         }
@@ -62,9 +63,9 @@ public class ProjectsController {
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<Object> updateProject(@PathVariable("id") String project_id, String user_id, @RequestBody ProjectForm p){
+    public ResponseEntity<Object> updateProject(@PathVariable("id") String projectId, String userId, @RequestBody ProjectForm p){
         try {
-            return ResponseHandler.generateResponse("success", HttpStatus.OK, projectService.updateProject(p, project_id, user_id));
+            return ResponseHandler.generateResponse(MSG, HttpStatus.OK, projectService.updateProject(p, projectId, userId));
         } catch (Exception e) {
             if (e.getClass().getSimpleName().equals(ClientNotAuthorizedException.getName()))
                     return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.UNAUTHORIZED, null);
