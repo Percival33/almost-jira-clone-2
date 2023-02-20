@@ -18,28 +18,32 @@ public class ProjectService {
         this.projectRepository = projectRepository;
     }
 
-    public Project getProjectById(String id) {
-        return projectRepository.findById(id).orElseThrow((() ->
-                new ResourceNotFoundException("Project", "id", id)));
+    public Project getProjectById(String id) throws ResourceNotFoundException {
+        return projectRepository.findById(id)
+                .orElseThrow((() -> new ResourceNotFoundException("Project", "id", id)));
     }
 
     public List<Project> getAllProjects() {
         return projectRepository.findAll();
     }
 
-    public void deleteProject(String id, String userId) {
-        projectRepository.findById(id).orElseThrow(() ->
-                new ResourceNotFoundException("Project", "id", id));
-        if (projectRepository.findById(id).get().overseerId().equals(userId))
+    public void deleteProject(String id, String userId) throws ResourceNotFoundException, ClientNotAuthorizedException {
+        var project = projectRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Project", "id", id));
+        if (project.overseerId().equals(userId)) {
             projectRepository.deleteById(id);
-        else throw(new ClientNotAuthorizedException());
+        } else {
+            throw new ClientNotAuthorizedException();
+        }
     }
 
-    public Project updateProject(ProjectForm p, String id, String userId) {
-        Project existingProject = projectRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("Project", "Id", id));
-        if (!projectRepository.findById(id).get().overseerId().equals(userId))
-            throw(new ClientNotAuthorizedException());
+    public Project updateProject(ProjectForm p, String id, String userId)
+            throws ResourceNotFoundException, ClientNotAuthorizedException {
+        Project existingProject = projectRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Project", "Id", id));
+        if (!existingProject.overseerId().equals(userId)) {
+            throw new ClientNotAuthorizedException();
+        }
 
         Date now = new Date();
         Project updatedProject = existingProject.toBuilder()
@@ -65,9 +69,9 @@ public class ProjectService {
                         .build());
     }
 
-    public Project updateProjectUpdateTasks(List<String> modifiedList, String id) {
-        Project existingProject = projectRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("Project", "Id", id));
+    public Project updateProjectTasks(List<String> modifiedList, String id) throws ResourceNotFoundException {
+        Project existingProject = projectRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Project", "Id", id));
 
         Date now = new Date();
         Project updatedProject = existingProject.toBuilder()
@@ -78,9 +82,9 @@ public class ProjectService {
         return projectRepository.save(updatedProject);
     }
 
-    public List<String> getTasks(String id){
-        Project existingProject = projectRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("Project", "Id", id));
+    public List<String> getTasks(String id) throws ResourceNotFoundException {
+        Project existingProject = projectRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Project", "Id", id));
         return existingProject.tasks();
     }
 }

@@ -2,16 +2,21 @@ package pl.edu.pw.elka.pap.z16.almostjira.controllers.tasks;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PathVariable;
+import pl.edu.pw.elka.pap.z16.almostjira.controllers.ApplicationController;
+import pl.edu.pw.elka.pap.z16.almostjira.exceptions.ResourceNotFoundException;
 import pl.edu.pw.elka.pap.z16.almostjira.services.ProjectService;
-import pl.edu.pw.elka.pap.z16.almostjira.utils.ResponseHandler;
-
-import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/projects")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
-public class TasksController {
+public class TasksController extends ApplicationController {
     private final ProjectService projectService;
     private static final String MSG = "success";
 
@@ -22,26 +27,26 @@ public class TasksController {
     public ResponseEntity<Object> addTaskToProject(@PathVariable("id") String projectId, String newTask){
         try {
             var modifiedList = projectService.getTasks(projectId);
-            if (modifiedList == null)
-                modifiedList = new ArrayList<>();
-            if (newTask == null || newTask.equals(""))
-                return ResponseHandler.generateResponse("empty task", HttpStatus.OK, projectService.updateProjectUpdateTasks(modifiedList, projectId));
+
+            // FIXME: Adding empty task results in OK response but we won't add this task to the project
+            if (isTaskEmpty(newTask)) {
+                return generateResponse("empty task", HttpStatus.OK, projectService.updateProjectTasks(modifiedList, projectId));
+            }
             modifiedList.add(newTask);
-            return ResponseHandler.generateResponse(MSG, HttpStatus.OK, projectService.updateProjectUpdateTasks(modifiedList, projectId));
-        } catch (Exception e) {
-            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
+            return generateResponse(MSG, HttpStatus.OK, projectService.updateProjectTasks(modifiedList, projectId));
+        } catch (ResourceNotFoundException e) {
+            return generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
         }
     }
 
     @PutMapping("/{id}/tasks")
     public ResponseEntity<Object> modifyTaskInProject(@PathVariable("id") String projectId, int taskIndex, String modifiedTask){
         try {
-
             var modifiedList = projectService.getTasks(projectId);
-            modifiedList.set(taskIndex-1, modifiedTask);
-            return ResponseHandler.generateResponse(MSG, HttpStatus.OK, projectService.updateProjectUpdateTasks(modifiedList, projectId));
+            modifiedList.set(taskIndex - 1, modifiedTask);
+            return generateResponse(MSG, HttpStatus.OK, projectService.updateProjectTasks(modifiedList, projectId));
         } catch (Exception e) {
-            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
+            return generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
         }
     }
 
@@ -50,9 +55,13 @@ public class TasksController {
         try {
             var modifiedList = projectService.getTasks(projectId);
             modifiedList.remove(taskIndex-1);
-            return ResponseHandler.generateResponse(MSG, HttpStatus.OK, projectService.updateProjectUpdateTasks(modifiedList, projectId));
+            return generateResponse(MSG, HttpStatus.OK, projectService.updateProjectTasks(modifiedList, projectId));
         } catch (Exception e) {
-            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
+            return generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
         }
+    }
+
+    private boolean isTaskEmpty(String task) {
+        return task == null || task.equals("");
     }
 }
