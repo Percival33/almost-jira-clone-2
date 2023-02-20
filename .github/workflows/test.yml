@@ -1,4 +1,4 @@
-name: Java Build CI
+name: Java Test CI
 
 on: [push]
 
@@ -12,6 +12,6 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-      - name: Build with Gradle
+      - name: Test with Gradle
         shell: bash
-        run: cd almost-jira && ./gradlew build
+        run: cd almost-jira && ./gradlew test
