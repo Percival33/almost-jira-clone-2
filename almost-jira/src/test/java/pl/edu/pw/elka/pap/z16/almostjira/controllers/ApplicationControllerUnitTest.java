@@ -1,4 +1,4 @@
-package pl.edu.pw.elka.pap.z16.almostjira.utils;
+package pl.edu.pw.elka.pap.z16.almostjira.controllers;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -7,7 +7,7 @@ import java.util.HashMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ResponseHandlerUnitTest {
+public class ApplicationControllerUnitTest {
 
 	@Test
 	public void shouldGenerateResponse() {
@@ -22,7 +22,7 @@ public class ResponseHandlerUnitTest {
 		expectedBody.put("data", data);
 
 		// when
-		var response = ResponseHandler.generateResponse(message, status, data);
+		var response = ApplicationController.generateResponse(message, status, data);
 
 		// then
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);

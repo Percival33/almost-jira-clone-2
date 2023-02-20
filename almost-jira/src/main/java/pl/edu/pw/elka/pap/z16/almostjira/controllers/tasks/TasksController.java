@@ -9,14 +9,14 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
+import pl.edu.pw.elka.pap.z16.almostjira.controllers.ApplicationController;
 import pl.edu.pw.elka.pap.z16.almostjira.exceptions.ResourceNotFoundException;
 import pl.edu.pw.elka.pap.z16.almostjira.services.ProjectService;
-import pl.edu.pw.elka.pap.z16.almostjira.utils.ResponseHandler;
 
 @RestController
 @RequestMapping("/projects")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
-public class TasksController {
+public class TasksController extends ApplicationController {
     private final ProjectService projectService;
     private static final String MSG = "success";
 
@@ -30,12 +30,12 @@ public class TasksController {
 
             // FIXME: Adding empty task results in OK response but we won't add this task to the project
             if (isTaskEmpty(newTask)) {
-                return ResponseHandler.generateResponse("empty task", HttpStatus.OK, projectService.updateProjectTasks(modifiedList, projectId));
+                return generateResponse("empty task", HttpStatus.OK, projectService.updateProjectTasks(modifiedList, projectId));
             }
             modifiedList.add(newTask);
-            return ResponseHandler.generateResponse(MSG, HttpStatus.OK, projectService.updateProjectTasks(modifiedList, projectId));
+            return generateResponse(MSG, HttpStatus.OK, projectService.updateProjectTasks(modifiedList, projectId));
         } catch (ResourceNotFoundException e) {
-            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
+            return generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
         }
     }
 
@@ -44,9 +44,9 @@ public class TasksController {
         try {
             var modifiedList = projectService.getTasks(projectId);
             modifiedList.set(taskIndex - 1, modifiedTask);
-            return ResponseHandler.generateResponse(MSG, HttpStatus.OK, projectService.updateProjectTasks(modifiedList, projectId));
+            return generateResponse(MSG, HttpStatus.OK, projectService.updateProjectTasks(modifiedList, projectId));
         } catch (Exception e) {
-            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
+            return generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
         }
     }
 
@@ -55,9 +55,9 @@ public class TasksController {
         try {
             var modifiedList = projectService.getTasks(projectId);
             modifiedList.remove(taskIndex-1);
-            return ResponseHandler.generateResponse(MSG, HttpStatus.OK, projectService.updateProjectTasks(modifiedList, projectId));
+            return generateResponse(MSG, HttpStatus.OK, projectService.updateProjectTasks(modifiedList, projectId));
         } catch (Exception e) {
-            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
+            return generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
         }
     }
 
