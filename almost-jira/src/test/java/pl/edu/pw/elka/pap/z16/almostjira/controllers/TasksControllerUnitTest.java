@@ -25,7 +25,7 @@ class TasksControllerUnitTest {
 
         // given
         when(projectServiceMock.getTasks("number")).thenReturn(null);
-        when(projectServiceMock.updateProjectUpdateTasks(any(), any())).thenReturn(null);
+        when(projectServiceMock.updateProjectTasks(any(), any())).thenReturn(null);
 
         TasksController controller = new TasksController(projectServiceMock);
 
