@@ -1,6 +1,5 @@
 package pl.edu.pw.elka.pap.z16.almostjira.exceptions;
 
-
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
@@ -15,7 +14,7 @@ public class ClientNotAuthorizedException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
     public ClientNotAuthorizedException() {
-        super(String.format("User not authorized to modify resource"));
+        super("User not authorized to modify resource");
     }
 
     static public String getName() {
