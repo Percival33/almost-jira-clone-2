@@ -1,4 +1,5 @@
 package pl.edu.pw.elka.pap.z16.almostjira.models;
+
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
@@ -6,6 +7,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -25,6 +27,8 @@ public record Project(
         String projectName,
         @Getter
         List<String> tasks
-
-
-) { }
+) {
+    public Project {
+        tasks = tasks == null ? new ArrayList<>() : tasks;
+    }
+}

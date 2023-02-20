@@ -4,14 +4,13 @@ import org.springframework.stereotype.Service;
 
 import pl.edu.pw.elka.pap.z16.almostjira.exceptions.LoginAlreadyInUseException;
 import pl.edu.pw.elka.pap.z16.almostjira.exceptions.ResourceNotFoundException;
-import pl.edu.pw.elka.pap.z16.almostjira.models.*;
+import pl.edu.pw.elka.pap.z16.almostjira.models.User;
+import pl.edu.pw.elka.pap.z16.almostjira.models.UserForm;
 import pl.edu.pw.elka.pap.z16.almostjira.repositories.UserRepository;
 
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-
-
 
 @Service
 public class UserService {
@@ -20,33 +19,31 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public User getUserById(String id) {
-        return userRepository.findById(id).orElseThrow((() ->
-                new ResourceNotFoundException("User", "id", id)));
+    public User getUserById(String id) throws ResourceNotFoundException {
+        return userRepository.findById(id)
+                .orElseThrow((() -> new ResourceNotFoundException("User", "id", id)));
     }
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
-    public void deleteUser(String id) {
-        userRepository.findById(id).orElseThrow(() ->
-                new ResourceNotFoundException("User", "id", id));
+    public void deleteUser(String id) throws ResourceNotFoundException {
+        userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
         userRepository.deleteById(id);
     }
 
-    public User login(String login, String password) {
-        var userlist = getAllUsers();
-        for (User currentuser : userlist) {
-            if (login.equals(currentuser.login()) && password.equals(currentuser.password()))
-                return currentuser;
-        }
-        throw new ResourceNotFoundException("Matching data", "", login);
+    public User login(String login, String password) throws ResourceNotFoundException {
+        return getAllUsers().stream()
+                .filter(user -> user.login().equals(login) && user.password().equals(password))
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException("Matching data", "", login));
     }
 
-    public User updateUser(UserForm u, String id) {
-        User existingUser = userRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("User", "Id", id));
+    public User updateUser(UserForm u, String id) throws LoginAlreadyInUseException, ResourceNotFoundException {
+        User existingUser = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "Id", id));
 
         Date now = new Date();
         User updatedUser = existingUser.toBuilder()
@@ -57,17 +54,12 @@ public class UserService {
                 .lastModified(now)
                 .build();
 
-        var userlist = getAllUsers();
-        for (User currentUser : userlist) {
-            if (currentUser.login().equals(updatedUser.login()) && !currentUser.id().equals(updatedUser.id()))
-                throw (new LoginAlreadyInUseException());
-        }
+        checkLoginAlreadyInUse(updatedUser.login(), updatedUser.id());
         return userRepository.save(updatedUser);
     }
 
-    public User createUser(UserForm u) {
+    public User createUser(UserForm u) throws LoginAlreadyInUseException {
         Date now = new Date();
-
 
         var newUser = User.builder()
                 .id(String.valueOf(UUID.randomUUID()))
@@ -80,12 +72,14 @@ public class UserService {
                 .lastModified(now)
                 .build();
 
-        var userlist = getAllUsers();
-        for (User user : userlist) {
-            if (user.login().equals(newUser.login()))
-                throw (new LoginAlreadyInUseException());
-        }
-
+        checkLoginAlreadyInUse(newUser.login(), newUser.id());
         return userRepository.save(newUser);
+    }
+
+    private void checkLoginAlreadyInUse(String login, String userId) throws LoginAlreadyInUseException {
+        if (getAllUsers().stream()
+                .anyMatch(user -> user.login().equals(login) && !user.id().equals(userId))) {
+            throw new LoginAlreadyInUseException();
+        }
     }
 }

@@ -1,23 +1,26 @@
 package pl.edu.pw.elka.pap.z16.almostjira.controllers.projects;
 
-/* 1 projekt:
- project id
- project name
- tasks list
- overseer - user_id */
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import pl.edu.pw.elka.pap.z16.almostjira.controllers.ApplicationController;
 import pl.edu.pw.elka.pap.z16.almostjira.exceptions.ClientNotAuthorizedException;
+import pl.edu.pw.elka.pap.z16.almostjira.exceptions.ResourceNotFoundException;
 import pl.edu.pw.elka.pap.z16.almostjira.services.ProjectService;
 import pl.edu.pw.elka.pap.z16.almostjira.models.ProjectForm;
-import pl.edu.pw.elka.pap.z16.almostjira.utils.ResponseHandler;
 
 @RestController
 @RequestMapping("/projects")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
-public class ProjectsController {
+public class ProjectsController extends ApplicationController {
     private final ProjectService projectService;
     private static final String MSG = "success";
     public ProjectsController(ProjectService projectService) {
@@ -25,57 +28,44 @@ public class ProjectsController {
     }
     @PostMapping()
     public ResponseEntity<Object> addProject(@RequestBody ProjectForm newProject){
-        try {
-            return ResponseHandler.generateResponse(MSG, HttpStatus.CREATED, projectService.createProject(newProject));
-        } catch (Exception e) {
-            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
-        }
+        return generateResponse(MSG, HttpStatus.CREATED, projectService.createProject(newProject));
     }
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteProject(@PathVariable("id") String projectId, String userId){
         try {
             projectService.deleteProject(projectId, userId);
-            return ResponseHandler.generateResponse(MSG, HttpStatus.OK, "Project deleted successfully!");
-        } catch (Exception e) {
-            if (e.getClass().getSimpleName().equals(ClientNotAuthorizedException.getName()))
-                return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.UNAUTHORIZED, null);
-            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
+            return generateResponse(MSG, HttpStatus.OK, "Project deleted successfully!");
+        } catch (ClientNotAuthorizedException e) {
+            return generateResponse(e.getMessage(), HttpStatus.UNAUTHORIZED, null);
+        } catch (ResourceNotFoundException e) {
+            return generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
         }
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> getProjectById(@PathVariable("id") String projectId){
         try {
-            return ResponseHandler.generateResponse(MSG, HttpStatus.OK, projectService.getProjectById(projectId));
-        } catch (Exception e) {
-            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
+            return generateResponse(MSG, HttpStatus.OK, projectService.getProjectById(projectId));
+        } catch (ResourceNotFoundException e) {
+            return generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
         }
     }
 
     @GetMapping
     public ResponseEntity<Object> getProjects(){
-        try {
-            return ResponseHandler.generateResponse(MSG, HttpStatus.OK, projectService.getAllProjects());
-        } catch (Exception e) {
-            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
-        }
+        return generateResponse(MSG, HttpStatus.OK, projectService.getAllProjects());
     }
 
 
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateProject(@PathVariable("id") String projectId, String userId, @RequestBody ProjectForm p){
         try {
-            return ResponseHandler.generateResponse(MSG, HttpStatus.OK, projectService.updateProject(p, projectId, userId));
-        } catch (Exception e) {
-            if (e.getClass().getSimpleName().equals(ClientNotAuthorizedException.getName()))
-                    return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.UNAUTHORIZED, null);
-            return ResponseHandler.generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
+            return generateResponse(MSG, HttpStatus.OK, projectService.updateProject(p, projectId, userId));
+        } catch (ClientNotAuthorizedException e) {
+            return generateResponse(e.getMessage(), HttpStatus.UNAUTHORIZED, null);
+        } catch (ResourceNotFoundException e) {
+            return generateResponse(e.getMessage(), HttpStatus.NOT_FOUND, null);
         }
     }
-// lista słownikow reprezentujacych pojedynczy projekt
-// metoda zeby odczytac dane z projektu o danym Id
-// metoda zeby dodac projekt do listy (dba zeby id bylo unikalne)
-// metoda zeby zmienic projekt o danym id
-// metoda zeby usunac projekt  o danym id
 }
 

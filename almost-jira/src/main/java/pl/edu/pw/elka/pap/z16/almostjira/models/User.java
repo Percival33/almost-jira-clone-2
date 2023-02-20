@@ -19,7 +19,6 @@ public record User(
         @LastModifiedDate
         Date lastModified,
 
-
         @Getter
         String firstName,
         @Getter
